@@ -15,12 +15,15 @@ angular.module('saucedb.services', [])
 		var feed = [];
 		var promises = [];
 		
-		for(var i=1;i<2;i++) {
-			promises.push($http.get('http://api.randomuser.me/'));			
+		for(var i=1;i<5;i++) {
+			promises.push($http.get('http://api.randomuser.me/?x='+Math.random()));
+			console.log('added a damn network call');
 		}
 
 		$q.all(promises).then(function(data) {
 			for(var i=0;i<data.length;i++) {
+				console.log("working on item "+i);
+				console.dir(JSON.stringify(data[i].data.results[0]));
 				var user = data[i].data.results[0].user;
 				var item = {
 					id:i,
