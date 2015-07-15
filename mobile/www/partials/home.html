@@ -1,0 +1,38 @@
+<ion-view title="Home">
+
+	<ion-nav-buttons side="right">
+      <button class="button button-assertive ion-plus-round" ng-click="addReviewForm()">
+		  Add Review
+      </button>
+    </ion-nav-buttons>
+	
+	<ion-content class="padding">
+	
+		<div class="list card" ng-repeat="feedItem in feed">
+	
+			  <div class="item item-avatar">
+			    <img ng-src="{{feedItem.user.img}}">
+			    <h2>{{feedItem.sauce.name}}</h2>
+			    <p>Posted {{feedItem.posted}} by {{feedItem.user.name}}</p>
+			  </div>
+			
+			  <div class="item item-body">
+			    <p>{{feedItem.text}}</p>
+			    <p>
+			      <a href="#" class="subdued">Rating: {{feedItem.rating}}</a>
+			      <a href="#" class="subdued">Average Rating: {{feedItem.avgrating}}</a>
+			    </p>
+			  </div>
+			
+			  <div class="item tabs tabs-secondary tabs-icon-left">
+			    <a class="tab-item" href="#/sauce/{{feedItem.id}}">
+			      <i class="icon ion-thumbsup"></i>
+				  See All Reviews
+			    </a>
+			  </div>
+			
+		</div>
+	
+	</ion-content>
+
+</ion-view>

@@ -1,0 +1,17 @@
+{
+  "name": "ibmcloudcode",
+  "description": "Cloud Code SDK for IBM Bluemix",
+  "version": "1.0.0-20150409-1328",
+  "main": "./js/IBMCloudCode.js",
+  "keywords": [
+    "ibmcloudcode",
+    "ibmbluemix"
+  ],
+  "authors": [
+    "IBM"
+  ],
+  "license": "IBM",
+  "dependencies": {
+    "ibmbluemix": "https://hub.jazz.net/git/bluemixmobilesdk/ibmbluemix-javascript/.git"
+  }
+}

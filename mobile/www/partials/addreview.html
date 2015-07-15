@@ -1,0 +1,27 @@
+<!--
+	I'll be used for adding a new review to an existing sauce and
+	for adding a review to a new sauce.
+-->
+<ion-view title="Add Review">
+	
+	<ion-content class="padding">
+	
+		<div ng-if="existingSauce">
+			Sauce: {{sauce.name}}<br/>
+			Company: {{sauce.company}}
+		</div>
+		
+		<!-- your text -->
+		<div class="list list-inset">
+		  <label class="item item-input">
+			  <textarea placeholder="Your Review" ng-model="review.text"></textarea>
+		  </label>
+		</div>
+
+		Rating: <rating ng-model="review.rate" max="max"></rating>		
+
+		<button class="button button-assertive button-full" ng-click="addReview()">Add Rating</button>
+
+	</ion-content>
+
+</ion-view>

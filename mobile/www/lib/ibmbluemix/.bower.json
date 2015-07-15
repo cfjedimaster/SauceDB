@@ -1,0 +1,23 @@
+{
+  "name": "ibmbluemix",
+  "description": "Mobile Cloud Services JavaScript SDK for IBM Bluemix",
+  "main": "./js/IBMBluemix.js",
+  "keywords": [
+    "bluemix"
+  ],
+  "authors": [
+    "IBM"
+  ],
+  "license": "IBM",
+  "dependencies": {},
+  "_release": "3213a2a61e",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "3213a2a61e7c10329e725806a15322ac9af7498e"
+  },
+  "_source": "https://hub.jazz.net/git/bluemixmobilesdk/ibmbluemix-javascript/.git",
+  "_target": "*",
+  "_originalSource": "https://hub.jazz.net/git/bluemixmobilesdk/ibmbluemix-javascript/.git",
+  "_direct": true
+}

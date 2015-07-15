@@ -1,0 +1,26 @@
+{
+  "name": "ibmbluemix",
+  "description": "Mobile Cloud Services JavaScript SDK for IBM Bluemix",
+  "version": "1.0.0-20150409-1328",
+  "author": {
+    "name": [
+      "IBM"
+    ]
+  },
+  "main": "./js/IBMBluemix.js",
+  "repository": {
+    "type": "git",
+    "url": "https://hub.jazz.net/project/bluemixmobilesdk/ibmbluemix-javascript"
+  },
+  "licenses": [
+    {
+      "type": "IBM"
+    }
+  ],
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "request": "~2.34.0",
+    "yaml-js": "~0.0.8",
+    "shelljs": "~0.2.6"
+  }
+}

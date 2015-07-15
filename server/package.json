@@ -1,0 +1,30 @@
+{
+  "author": "Raymond Camden",
+  "engines": {
+    "node": "0.10.28"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "cloudant": "^1.0.0",
+    "express": "4.*",
+    "ibmbluemix": "*",
+    "ibmsecurity": "*",
+    "serve-favicon": "^2.3.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-simple-mocha": "0.4.0",
+    "load-grunt-tasks": "~0.3.0",
+    "time-grunt": "~0.2.9",
+    "when": "*",
+    "request": "*",
+    "assert": "*"
+  },
+  "repository": {},
+  "scripts": {
+    "start": "node app.js"
+  },
+  "description": "Starts a server which listens for user modules invocation requests.",
+  "license": "IBM",
+  "main": "app.js"
+}

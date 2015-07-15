@@ -1,0 +1,37 @@
+<ion-view title="Review">
+		
+	<ion-content class="padding">
+	
+		<div class="list card">
+	
+			  <div class="item">
+			    <h2>{{sauce.name}}</h2>
+			  </div>
+			
+			  <div class="item item-body">
+			    <p>Company: {{sauce.company}}</p>
+			    <p>
+			      <a href="#" class="subdued">Average Rating: {{sauce.avgrating}}</a>
+			    </p>
+			  </div>
+						
+		</div>
+
+		<div class="list card" ng-repeat="review in sauce.reviews">
+	
+			  <div class="item item-avatar">
+			    <img ng-src="{{review.user.img}}">
+			    <p>Posted {{review.posted}} by {{review.user.name}}</p>
+			  </div>
+			
+			  <div class="item item-body">
+			    <p>{{review.text}}</p>
+			    <p>
+			      <a href="#" class="subdued">Rating: {{review.rating}}</a>
+			    </p>
+			  </div>
+			
+		</div>	
+	</ion-content>
+
+</ion-view>

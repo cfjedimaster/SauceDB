@@ -1,0 +1,25 @@
+<ion-modal-view>
+	<ion-header-bar class="bar bar-header bar-positive">
+		<h1 class="title">Search for Sauce</h1>
+		<button class="button button-clear button-primary" ng-click="modal.hide()">Cancel</button>
+	</ion-header-bar>
+
+	<ion-content class="padding">
+		<p>
+		Type in the name of a sauce below to select an existing product:
+		</p>
+		
+		<label class="item item-input">
+		<input ng-model="sauceSearch" ng-change="doSearch(sauceSearch)" type="text" placeholder="Name">
+		</label>
+						
+		<ion-list>
+			<ion-item ng-repeat="result in results" ng-click="doLoad({{result.id}})">
+				{{result.label}}
+			</ion-item>
+		</ion-list>		
+
+		<button class="button button-full button-positive" ng-click="createContact(newUser)">Add New Sauce</button>
+
+	</ion-content>
+</ion-modal-view>
