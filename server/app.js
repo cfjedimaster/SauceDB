@@ -9,10 +9,12 @@ var express 	= require('express'),
 		applicationId : '38a0a550-b018-4a10-b879-aec68868c249'
 	};
 
+var credentials = require('./credentials');
+
 app.use(favicon(__dirname + '/public/favicon.ico'));
 
-var cloudant = require('cloudant')('https://a52742da-6eb5-436f-8d56-bed1885043cf-bluemix:9d8f731f10f36216ad94eab2b2f9296eb03bdf760de03989e306d06e48c335f0@a52742da-6eb5-436f-8d56-bed1885043cf-bluemix.cloudant.com');
-var db = cloudant.use("todos");
+var cloudant = require('cloudant')(credentials.cloudant_access_url);
+var db = cloudant.use("sauces");
 
 // init core sdk
 ibmbluemix.initialize(config);
@@ -33,38 +35,28 @@ app.use(function(req, res, next) {
 app.use(require('./lib/setup'));
 
 var ibmconfig = ibmbluemix.getConfig();
+console.log(ibmconfig.getContextRoot());
+app.get(ibmconfig.getContextRoot()+'/feed',  function(req, res) {
+	console.log('Requesting feed');
 
-/*
-app.get(ibmconfig.getContextRoot()+'/allfree', function(req, res) {
-	console.log('FREE1 22got here at least...');
-	db.list(function(err, body) {
+	db.view("Reviews", "reviews", {descending:true}, function(err, body) {
 		if(err) console.log('err '+err);
 		else {
+			var result = [];
 			body.rows.forEach(function(doc) {
-				console.log(doc);
+				//console.log(doc);
+				var item = doc.value;
+				item.id = doc.id;
+				result.push(item);
 			});
-			res.send('allfree SHORT form, '+body.rows.length);
+			res.setHeader('Content-Type', 'application/json');
+			res.json(result);
 		}
+		
 	});
 });
-*/
 
-//Everything after here must be an authenticated call
-var mas = require('ibmsecurity')();
-app.use(mas);
 
-app.get(ibmconfig.getContextRoot()+'/all', function(req, res) {
-	console.log('NOT FREEEEE\n\n');
-	db.list(function(err, body) {
-		if(err) console.log('err '+err);
-		else {
-			body.rows.forEach(function(doc) {
-				console.log(doc);
-			});
-			res.send('hello from all');
-		}
-	});
-});
 
 app.use(ibmconfig.getContextRoot(), require('./lib/staticfile'));
 

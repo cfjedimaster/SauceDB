@@ -47,16 +47,10 @@ angular.module('saucedb', ['ionic','saucedb.controllers','saucedb.services','ngO
     
     IBMBluemix.initialize(config).then(function() {
       console.log('ok maybe?');
-      /* pointless
-      var logger = IBMBluemix.getLogger();
-      logger.setLevel("verbose");
-      logger.verbose("testing verbose");
-      */
     }, function(err) {
        console.log('crap your pants time');
     });
     
-    //setup pouchdb
     
   });
 })

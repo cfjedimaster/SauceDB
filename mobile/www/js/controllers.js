@@ -50,11 +50,12 @@ angular.module('saucedb.controllers', [])
   console.log('HomeCtrl');
   $ionicLoading.show({template:"Loading feed..."});
   
+
   dataService.getFeed().then(function(res) {
     $ionicLoading.hide();
     $scope.feed = res;
   });
-
+  
   $ionicModal.fromTemplateUrl('partials/findsauce.html', {
     scope: $scope
   }).then(function(modal) {

@@ -13,18 +13,7 @@ angular.module('saucedb.services', [])
 		
 		//fake it till we make it
 		var feed = [];
-		var promises = [];
-		
-		for(var i=1;i<5;i++) {
-			promises.push($http.get('http://api.randomuser.me/?x='+Math.random()));
-			console.log('added a damn network call');
-		}
-
-		$q.all(promises).then(function(data) {
-			for(var i=0;i<data.length;i++) {
-				console.log("working on item "+i);
-				console.dir(JSON.stringify(data[i].data.results[0]));
-				var user = data[i].data.results[0].user;
+/*		
 				var item = {
 					id:i,
 					posted:"July 14, 2015 at 2:32 PM",
@@ -40,10 +29,42 @@ angular.module('saucedb.services', [])
 						name:user.name.first+' '+user.name.last
 					}
 				}
-				feed.push(item);			
 			}
-			deferred.resolve(feed);
-		});
+			*/
+
+            //now try the app
+            var cc = IBMCloudCode.initializeService();
+            cc.setBaseUrl('http://localhost:3000');
+            cc.get("/feed").then(function(data){
+				data = JSON.parse(data);
+                console.log(data);
+				for(var i=0;i<data.length;i++) {
+					var result = data[i];
+					console.log('did i run');
+					var item = {
+						id:result.id,
+						posted:result.review.posted,
+						sauce:{
+							name:result.sauce_name,
+							company:result.sauce_company
+						},
+						rating:result.review.rating,
+						avgrating:0,
+						text:result.review.text,
+						user:{
+							img:result.review.user.img,
+							name:result.review.user.name
+						}
+					};
+					feed.push(item);
+				}
+				console.log('sending '+feed);
+				deferred.resolve(feed);
+				
+            },function(err){
+                console.log(err);
+            });
+
 		
 		return deferred.promise;
 	}
