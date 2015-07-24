@@ -56,6 +56,20 @@ app.get(ibmconfig.getContextRoot()+'/feed',  function(req, res) {
 	});
 });
 
+app.get(ibmconfig.getContextRoot()+'/sauce/:id',  function(req, res) {
+	console.log('Requesting sauce '+req.params.id);
+	console.dir(req.params);
+
+	db.get(req.params.id, function(err, body) {
+		console.dir(body);
+		//TODO: Handle a bad id
+		var result = {};
+		//for now, just copy it
+		result = body;
+		res.setHeader('Content-Type', 'application/json');
+		res.json(result);		
+	});
+});
 
 
 app.use(ibmconfig.getContextRoot(), require('./lib/staticfile'));
