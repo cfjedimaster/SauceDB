@@ -2,6 +2,9 @@ angular.module('saucedb.services', [])
 
 .factory('dataService', function($http,$q) {
 
+    var cc = IBMCloudCode.initializeService();
+    cc.setBaseUrl('http://localhost:3000');
+
 	var addReview = function() {
 		var deferred = $q.defer();
 		deferred.resolve();
@@ -13,28 +16,8 @@ angular.module('saucedb.services', [])
 		
 		//fake it till we make it
 		var feed = [];
-/*		
-				var item = {
-					id:i,
-					posted:"July 14, 2015 at 2:32 PM",
-					sauce:{
-						name:"Sauce "+i,
-						company:"Company "+i
-					},
-					rating:Math.round(Math.random()*5) + 1,
-					avgrating:Math.round(Math.random()*5) + 1,
-					text:"This sauce was rather spicy with a nice aftertaste...",
-					user:{
-						img:user.picture.thumbnail,
-						name:user.name.first+' '+user.name.last
-					}
-				}
-			}
-			*/
 
             //now try the app
-            var cc = IBMCloudCode.initializeService();
-            cc.setBaseUrl('http://localhost:3000');
             cc.get("/feed").then(function(data){
 				data = JSON.parse(data);
                 console.log(data);
@@ -49,7 +32,7 @@ angular.module('saucedb.services', [])
 							company:result.sauce_company
 						},
 						rating:result.review.rating,
-						avgrating:0,
+						avgrating:result.sauce_avg_rating,
 						text:result.review.text,
 						user:{
 							img:result.review.user.img,
@@ -71,28 +54,18 @@ angular.module('saucedb.services', [])
 	
 	var getSauce = function(id) {
 		var deferred = $q.defer();
-		//so a review is the Sauce object + array of reviews
-		//to keep it simpler, we'll skip the fancy randomuser integration
-		var sauce = {
-			name:"Sauce "+id,
-			company:"Company "+id,
-			avgrating:Math.round(Math.random()*5) + 1,
-			reviews:[]
-		}
-		for(var i=0;i<Math.round(Math.random()*10) + 1;i++) {
-			var item = {
-				id:i,
-				posted:"July 14, 2015 at 2:32 PM",
-				rating:Math.round(Math.random()*5) + 1,
-				text:"This sauce was rather spicy with a nice aftertaste...",
-				user:{
-					img:"http://placekitten.com/g/40/40",
-					name:"Joe Blow"
-				}
-			}
-			sauce.reviews.push(item);
-		}
-		deferred.resolve(sauce);
+		
+        cc.get("/sauce/"+id).then(function(data){
+			data = JSON.parse(data);			
+			//to be consistent w/ the Feed, copy _id to id
+			data.id = data._id;
+			console.log('got ',data);
+			deferred.resolve(data);
+			
+        },function(err){
+            console.log(err);
+        });
+		
 		return deferred.promise;
 	}
 	
