@@ -4,7 +4,7 @@ angular.module('saucedb.controllers', [])
 	console.log('LoginCtrl');
   
   //used to skip auth when testing
-  var skipAuth=true;
+  var skipAuth=false;
   
   $ionicPlatform.ready(function() {
 
@@ -69,38 +69,49 @@ angular.module('saucedb.controllers', [])
       $scope.results = res;
     });
   }
-  
-  $scope.doLoad = function(id) {
-    $scope.modal.hide();
-    $state.go("AddReview", {id:id});
-  }
-  
+    
   $scope.addReviewForm = function() {
     $scope.modal.show();
   }
+	
+	$scope.doReview = function(id,name) {
+		console.log('click '+JSON.stringify(arguments));
+		var sauce = {};
+    $scope.modal.hide();
+		$state.go('AddReview', {name:name, id:id});
+	}
 
 })
-.controller('EntryCtrl', function($scope,dataService,$ionicLoading,$stateParams) {
+.controller('EntryCtrl', function($scope,dataService,$ionicLoading,$stateParams,$state) {
   console.log('EntryCtrl for '+$stateParams.id);
-//  $ionicLoading.show({template:"Loading feed..."});
+  $ionicLoading.show({template:"Loading sauce..."});
   
   dataService.getSauce($stateParams.id).then(function(res) {
-    //$ionicLoading.hide();
-    console.dir(res);
+    $ionicLoading.hide();
     $scope.sauce = res;
   });
+	
+	$scope.goHome = function() {
+		$state.go('Home');	
+	};
+	
 })
-.controller('AddReviewCtrl', function($scope,$stateParams,dataService,$state,$ionicHistory) {
+.controller('AddReviewCtrl', function($scope,$stateParams,dataService,$state,$ionicHistory,$rootScope) {
 
-  $scope.existingSauce = $stateParams.id;
+	console.log('state params are '+JSON.stringify($stateParams));
+	$scope.sauce = {name:"", company:"", id:""};
+	
+	$scope.id = "";
+	if($stateParams.name && $stateParams.name != "") {
+		$scope.existingSauce = true;
+		$scope.sauce.name = $stateParams.name;
+	}
+	if($stateParams.id && $stateParams.id != "") {
+		$scope.sauce.id = $stateParams.id;
+	}
+	
+  //$scope.existingSauce = $stateParams.id;
   $scope.review = {text:"",rate:3};
-  
-  if($scope.existingSauce) {
-    dataService.getSauce($stateParams.id).then(function(res) {
-      $scope.sauce = res;
-    });
-    
-  }
 
   //used for star rating
   $scope.max = 5;
@@ -112,28 +123,14 @@ angular.module('saucedb.controllers', [])
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
-    
+    		
     //needs user
-    var user = {};
-    dataService.addReview($scope.sauce, user, $scope.review.text, $scope.review.rate).then(function() {
-      $state.go("Sauce", {id:$scope.sauce.id});
+    var user = $rootScope.accessToken;
+    dataService.addReview($scope.sauce, user, $scope.review.text, $scope.review.rate).then(function(id) {
+      $state.go("Sauce", {id:id});
     });
     
   }
 
 });
 
-
-
-/*
-      //now try the app
-      var cc = IBMCloudCode.initializeService();
-      //cc.setBaseUrl('http://localhost:3000');
-      cc.get("/all").then(function(data){
-          console.log(data);
-      },function(err){
-          console.log('non free');
-          console.log(err);
-      });
-
-*/

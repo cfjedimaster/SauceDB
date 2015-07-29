@@ -14,7 +14,7 @@
 		</label>
 						
 		<ion-list>
-			<ion-item ng-repeat="result in results" ng-click="doReview('{{result.id}}')">
+			<ion-item ng-repeat="result in results" ng-click="doReview('{{result.id}}','{{result.name}}')">
 				{{result.name}}
 			</ion-item>
 		</ion-list>		

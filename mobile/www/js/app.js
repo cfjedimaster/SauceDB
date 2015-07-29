@@ -20,9 +20,13 @@ angular.module('saucedb', ['ionic','saucedb.controllers','saucedb.services','ngO
         templateUrl: 'partials/entry.html'
       })
       .state('AddReview', {
-        url: '/addreview/:id',
+        url: '/addreview',
         controller: 'AddReviewCtrl',
-        templateUrl: 'partials/addreview.html'
+        templateUrl: 'partials/addreview.html',
+				params:{
+					name:{value:""},
+					id:{value:""}
+				}
       });
 
 		  $urlRouterProvider.otherwise("/");

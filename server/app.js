@@ -2,6 +2,7 @@ var express 	= require('express'),
 	app     	= express(),
 	favicon 	= require('serve-favicon'),
 	ibmbluemix 	= require('ibmbluemix'),
+	https		= require('https'),
 	config  	= {
 		// change to real application route assigned for your application
 		applicationRoute : 'saucedb.mybluemix.net',
@@ -20,6 +21,9 @@ var db = cloudant.use("sauces");
 ibmbluemix.initialize(config);
 var logger = ibmbluemix.getLogger();
 
+app.use(require('cookie-parser')("my cookies bring everyone to the yard"));
+app.use(require('express-session')());
+
 //redirect to cloudcode doc page when accessing the root context
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/public/index.html');
@@ -34,6 +38,13 @@ app.use(function(req, res, next) {
 // init basics for an express app
 app.use(require('./lib/setup'));
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, IBM-APPLICATION-ID, IBM-DEVICE-MODEL, IBM-DEVICE-TYPE, IBM-DEVICE-ID, IBM-REQUEST-CORRELATION-ID, IBM-DEVICE-PLATFORM-VERSION, IBM-APPLICATION-SECRET, IBM-DEVICE-NAME");
+  next();
+});
+
+  
 var ibmconfig = ibmbluemix.getConfig();
 console.log(ibmconfig.getContextRoot());
 app.get(ibmconfig.getContextRoot()+'/feed',  function(req, res) {
@@ -76,8 +87,8 @@ app.get(ibmconfig.getContextRoot()+'/search/:term', function(req, res) {
 	var term = "name:" + req.params.term;
 	term += "*";
 	console.log(term);
-	db.search('SauceName','SauceName', {q:term}, function(er, results) {
-		if(er) throw er;
+	db.search('SauceName','SauceName', {q:term}, function(err, results) {
+		if(err) throw er;
 		var result = [];
 		for(var i=0;i<results.rows.length;i++) {
 			//console.dir(results.rows[i]);
@@ -87,6 +98,95 @@ app.get(ibmconfig.getContextRoot()+'/search/:term', function(req, res) {
 		res.setHeader('Content-Type', 'application/json');
 		res.json(result);		
 	});
+});
+
+/*
+used to auth calls
+*/
+function secure(req, result, next) {    
+    if(req.session.tokenchecked) {
+        next();   
+    } else {
+		console.log('need to check token ');
+		var token = req.body.token;
+		//check to ensure token is good
+		https.get('https://graph.facebook.com/me?fields=email&access_token='+token, function(res) {
+			var str = '';
+			res.on('data', function(chunk) {
+				str += chunk;
+			})
+			res.on('end', function() {
+				var response = JSON.parse(str);
+				console.dir(response);
+				if(response.id) {
+					console.log('good');
+					req.session.tokenchecked = 1;
+					next();
+				} else {
+					console.log('bad');
+					result.send("0");
+				}
+			})
+		}).end();
+	
+    }
+}
+
+app.post(ibmconfig.getContextRoot()+'/addreview', secure, function(req, res) {
+	console.log("adding review "+JSON.stringify(req.body));
+	
+	//First, validate token
+	//Then validate data
+
+	var newReview = {
+		posted:new Date(),
+		rating:req.body.rating,
+		text:req.body.text,
+			user:{
+				name:"Joe",
+				img:"http://placekitten.com/g/40/40"
+			}
+	};
+
+
+	//Then post to db
+	//So first q, is this a new sauce?
+	
+	if(!req.body.sauce.id) {
+		console.log('i need to make a new sauce');
+		
+		db.insert({
+			name:req.body.sauce.name,
+			company:req.body.sauce.company,
+			avgrating:newReview.rating,
+			reviews:[newReview]		
+		}, function(err, body) {
+			if(err) throw err;
+			res.setHeader('Content-Type', 'application/json');
+			res.json(body.id);		
+		});	
+	} else {
+		//not new, so get, then add	
+		db.get(req.body.sauce.id, function(err, body) {
+			if(err) throw err;
+			body.reviews.push(newReview);
+			//move the id to _id
+			body._id = body.id;
+			delete body.id;
+			//calculate avgrate
+			var totalRating = 0;
+			for(var i=0;i<body.reviews.length;i++) {
+				totalRating += parseInt(body.reviews[i].rating,10);	
+			}
+			body.avgrating = totalRating/body.reviews.length;
+			db.insert(body, function(err, body) {
+				if(err) throw err;
+				res.setHeader('Content-Type', 'application/json');
+				res.json(body.id);		
+			});	
+					
+		});	
+	}
 });
 
 app.use(ibmconfig.getContextRoot(), require('./lib/staticfile'));

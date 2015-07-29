@@ -5,9 +5,21 @@ angular.module('saucedb.services', [])
     var cc = IBMCloudCode.initializeService();
     cc.setBaseUrl('http://localhost:3000');
 
-	var addReview = function() {
+	var addReview = function(sauce, user, text, rating) {
 		var deferred = $q.defer();
-		deferred.resolve();
+        cc.post("/addreview", {
+			sauce:sauce,
+			token:user,
+			text:text,
+			rating:rating	
+		}).then(function(data){
+			console.log('back from server on add review',JSON.parse(data));
+			deferred.resolve(JSON.parse(data));
+			
+        },function(err){
+            console.log(err);
+        });
+		
 		return deferred.promise;
 	}
 	
@@ -23,7 +35,6 @@ angular.module('saucedb.services', [])
                 console.log(data);
 				for(var i=0;i<data.length;i++) {
 					var result = data[i];
-					console.log('did i run');
 					var item = {
 						id:result.id,
 						posted:result.review.posted,
@@ -72,19 +83,7 @@ angular.module('saucedb.services', [])
 	var searchSauce = function(term) {
 		var deferred = $q.defer();
 		term = term.toLowerCase();
-		
-		/*
-		//use hard coded set of names 
-		var names = [
-			"Alpha","Amma","Anna","Anno","Alphabet","Alcazam"
-		]
-		var results = [];
-		for(var i=0;i<names.length;i++) {
-			if(names[i].toLowerCase().indexOf(term) >= 0) results.push({id:1,label:names[i]});	
-		}
-		*/
-		
-				
+					
         cc.get("/search/"+term).then(function(data){
 			data = JSON.parse(data);			
 			deferred.resolve(data);

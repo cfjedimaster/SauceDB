@@ -8,7 +8,18 @@
 	
 		<div ng-if="existingSauce">
 			Sauce: {{sauce.name}}<br/>
-			Company: {{sauce.company}}
+		</div>
+		<div ng-if="!existingSauce">
+			<div class="list list-inset">
+			  <label class="item item-input">
+				  <input type="text" placeholder="New Sauce" ng-model="sauce.name" />
+			  </label>
+			</div>
+			<div class="list list-inset">
+			  <label class="item item-input">
+				  <input type="text" placeholder="New Sauce Company" ng-model="sauce.company" />
+			  </label>
+			</div>
 		</div>
 		
 		<!-- your text -->
