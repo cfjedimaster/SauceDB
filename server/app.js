@@ -110,13 +110,16 @@ function secure(req, result, next) {
 		console.log('need to check token ');
 		var token = req.body.token;
 		//check to ensure token is good
-		https.get('https://graph.facebook.com/me?fields=email&access_token='+token, function(res) {
+		https.get('https://graph.facebook.com/me?fields=email,name,picture&access_token='+token, function(res) {
 			var str = '';
 			res.on('data', function(chunk) {
 				str += chunk;
 			})
 			res.on('end', function() {
 				var response = JSON.parse(str);
+				//store name and image
+				req.session.name = response.name;
+				req.session.img = response.picture.data.url;
 				console.dir(response);
 				if(response.id) {
 					console.log('good');
@@ -143,11 +146,11 @@ app.post(ibmconfig.getContextRoot()+'/addreview', secure, function(req, res) {
 		rating:req.body.rating,
 		text:req.body.text,
 			user:{
-				name:"Joe",
-				img:"http://placekitten.com/g/40/40"
+				name:req.session.name,
+				img:req.session.img
 			}
 	};
-
+	console.log("New Review:", JSON.stringify(newReview));
 
 	//Then post to db
 	//So first q, is this a new sauce?
@@ -170,9 +173,7 @@ app.post(ibmconfig.getContextRoot()+'/addreview', secure, function(req, res) {
 		db.get(req.body.sauce.id, function(err, body) {
 			if(err) throw err;
 			body.reviews.push(newReview);
-			//move the id to _id
-			body._id = body.id;
-			delete body.id;
+
 			//calculate avgrate
 			var totalRating = 0;
 			for(var i=0;i<body.reviews.length;i++) {

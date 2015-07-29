@@ -25,7 +25,7 @@ angular.module('saucedb.controllers', [])
           $rootScope.accessToken = response.authResponse.accessToken;
           ngFB.api({
             path:'/me',
-            params: { fields: 'id,name'}
+            params: { fields: 'id,name,email,picture'}
           }).then(
             function(user) {
               console.log(user);
@@ -86,10 +86,13 @@ angular.module('saucedb.controllers', [])
   console.log('EntryCtrl for '+$stateParams.id);
   $ionicLoading.show({template:"Loading sauce..."});
   
-  dataService.getSauce($stateParams.id).then(function(res) {
-    $ionicLoading.hide();
-    $scope.sauce = res;
-  });
+	$scope.$on('$ionicView.enter', function(){
+	  dataService.getSauce($stateParams.id).then(function(res) {
+	    $ionicLoading.hide();
+	    $scope.sauce = res;
+	  });
+	});
+
 	
 	$scope.goHome = function() {
 		$state.go('Home');	
@@ -110,7 +113,6 @@ angular.module('saucedb.controllers', [])
 		$scope.sauce.id = $stateParams.id;
 	}
 	
-  //$scope.existingSauce = $stateParams.id;
   $scope.review = {text:"",rate:3};
 
   //used for star rating
