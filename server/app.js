@@ -58,7 +58,6 @@ app.get(ibmconfig.getContextRoot()+'/feed',  function(req, res) {
 
 app.get(ibmconfig.getContextRoot()+'/sauce/:id',  function(req, res) {
 	console.log('Requesting sauce '+req.params.id);
-	console.dir(req.params);
 
 	db.get(req.params.id, function(err, body) {
 		console.dir(body);
@@ -71,6 +70,24 @@ app.get(ibmconfig.getContextRoot()+'/sauce/:id',  function(req, res) {
 	});
 });
 
+app.get(ibmconfig.getContextRoot()+'/search/:term', function(req, res) {
+	console.log("searching for "+req.params.term);
+	//we need to manipulate term a bit
+	var term = "name:" + req.params.term;
+	term += "*";
+	console.log(term);
+	db.search('SauceName','SauceName', {q:term}, function(er, results) {
+		if(er) throw er;
+		var result = [];
+		for(var i=0;i<results.rows.length;i++) {
+			//console.dir(results.rows[i]);
+			result.push({id:results.rows[i].id, name:results.rows[i].fields.name});	
+		}
+		console.dir(result);
+		res.setHeader('Content-Type', 'application/json');
+		res.json(result);		
+	});
+});
 
 app.use(ibmconfig.getContextRoot(), require('./lib/staticfile'));
 

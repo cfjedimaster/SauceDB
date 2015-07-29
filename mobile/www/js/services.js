@@ -73,6 +73,7 @@ angular.module('saucedb.services', [])
 		var deferred = $q.defer();
 		term = term.toLowerCase();
 		
+		/*
 		//use hard coded set of names 
 		var names = [
 			"Alpha","Amma","Anna","Anno","Alphabet","Alcazam"
@@ -81,7 +82,17 @@ angular.module('saucedb.services', [])
 		for(var i=0;i<names.length;i++) {
 			if(names[i].toLowerCase().indexOf(term) >= 0) results.push({id:1,label:names[i]});	
 		}
-		deferred.resolve(results);
+		*/
+		
+				
+        cc.get("/search/"+term).then(function(data){
+			data = JSON.parse(data);			
+			deferred.resolve(data);
+			
+        },function(err){
+            console.log(err);
+        });
+		
 		return deferred.promise;
 	
 	}

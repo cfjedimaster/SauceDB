@@ -14,12 +14,12 @@
 		</label>
 						
 		<ion-list>
-			<ion-item ng-repeat="result in results" ng-click="doLoad({{result.id}})">
-				{{result.label}}
+			<ion-item ng-repeat="result in results" ng-click="doReview('{{result.id}}')">
+				{{result.name}}
 			</ion-item>
 		</ion-list>		
 
-		<button class="button button-full button-positive" ng-click="createContact(newUser)">Add New Sauce</button>
+		<button class="button button-full button-positive" ng-click="doReview()">Add New Sauce</button>
 
 	</ion-content>
 </ion-modal-view>
